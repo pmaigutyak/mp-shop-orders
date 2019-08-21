@@ -50,9 +50,45 @@ class OrderStatusDescription(models.TextField):
             *args, **kwargs)
 
 
+class OrderStatusDefault(models.BooleanField):
+
+    def __init__(
+            self,
+            verbose_name=_('Is default'),
+            blank=True,
+            default=False,
+            *args, **kwargs):
+
+        super(OrderStatusDefault, self).__init__(
+            verbose_name=verbose_name,
+            default=default,
+            blank=blank,
+            *args, **kwargs)
+
+
+
+class OrderStatusQueryset(models.QuerySet):
+
+    def default(self):
+        return self.get(is_default=True)
+
+
+class OrderStatusManager(models.Manager):
+
+    def get_queryset(self):
+        return OrderStatusQueryset(self.model, using=self._db)
+
+    def default(self):
+        return self.get_queryset().default()
+
+
 class AbstractOrderStatus(models.Model):
 
     name = OrderStatusName()
+
+    is_default = OrderStatusDefault()
+
+    objects = OrderStatusManager()
 
     def __str__(self):
         return self.name
