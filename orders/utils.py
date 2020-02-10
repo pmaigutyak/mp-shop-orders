@@ -34,7 +34,9 @@ def send_new_order_email(context, subject=None):
 
     html = render_to_string('orders/new_order_email_for_manager.html', context)
 
-    mail_managers(subject=subject, message='', html_message=html)
+    mail_managers(
+        subject=subject, message='', html_message=html, fail_silently=True
+    )
 
 
 def push_new_order_message_to_session(request, context):
